@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows;
@@ -31,7 +32,12 @@ namespace BasicMechanism
 
         private void Yes_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            //this.Close();
+            // no idea how to refer to the previous window
+            // tried foreach(Window window in Application.Current.Windows) <- but idk how to refer to the specific one
+            // there is GetType function that idk how works 
+            // there is app.currn.wws.OfType<> but idk what type should i write etc
+
         }
     }
 }

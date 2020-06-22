@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using static BasicMechanism.MainWindow;
 
 namespace BasicMechanism
 {
@@ -20,12 +23,18 @@ namespace BasicMechanism
         public RuleAddWindow()
         {
             InitializeComponent();
+
         }
 
         private void ButtonAccept_Click(object sender, RoutedEventArgs e)
         {
             string text = RuleText.Text;
-            //Application.Current.MainWindow
+            Window mainWindow = Application.Current.MainWindow;
+
+            //id might be set to the number of existing rules [if that's possible]
+            // don't know how to refer to the list of rules couse it's set in the xml not c#
+            //mainWindow.ListOfRules.Items.Add(new NewRule { Id = 0, Rule = text });
+
             this.Close();
         }
 

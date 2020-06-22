@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:BasicMechanism"
         mc:Ignorable="d"
         Title="RuleAddWindow" Height="450" Width="800">
-    <Grid IsHitTestVisible="False">
+    <Grid IsHitTestVisible="True">
         <Label Content="Text to highlight:" HorizontalAlignment="Left" Margin="48,79,0,0" VerticalAlignment="Top" Width="169" FontSize="20"/>
         <TextBox x:Name="RuleText" HorizontalAlignment="Left" Margin="222,79,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="444" Height="69" Cursor="IBeam"/>
         <Label Content="Color:" HorizontalAlignment="Left" Margin="102,217,0,0" VerticalAlignment="Top" FontSize="20"/>

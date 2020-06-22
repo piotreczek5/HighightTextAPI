@@ -23,6 +23,15 @@ namespace BasicMechanism
         public MainWindow()
         {
             InitializeComponent();
+            Application.Current.MainWindow = this;
+            //ListBox ListOfRules = new ListBox();
+        }
+
+        public class NewRule
+        {
+            public int Id { get; set; }
+            public string Rule { get; set; }
+            //+color
         }
 
         private void ButtonAdd_Click(object sender, RoutedEventArgs e)
