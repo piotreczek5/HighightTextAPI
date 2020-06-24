@@ -10,6 +10,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
@@ -38,6 +39,20 @@ namespace BasicMechanism
             // there is GetType function that idk how works 
             // there is app.currn.wws.OfType<> but idk what type should i write etc
 
+            // it's really bad way to do it, but it works for now. counter doesn't metter
+
+            
+            int noMetterValue = 0;
+            foreach (Window window in Application.Current.Windows)
+            {
+                if (window == Application.Current.MainWindow)
+                    noMetterValue++;
+                else
+                    window.Close();
+            }
+            
+            //Application.Current.Windows.OfType<RuleAddWindow>(); 
+            //that's cool but how to close this one now.
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -23,7 +24,9 @@ namespace BasicMechanism
         public RuleAddWindow()
         {
             InitializeComponent();
-
+            //maybe do some event handler and event that will pass the data on close / open
+            // so than i would be able to use RuleAddWindow for edit and add.
+            //couse edit is basically add with data passed on open
         }
 
         private void ButtonAccept_Click(object sender, RoutedEventArgs e)
