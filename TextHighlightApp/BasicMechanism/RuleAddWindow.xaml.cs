@@ -27,6 +27,13 @@ namespace BasicMechanism
             //maybe do some event handler and event that will pass the data on close / open
             // so than i would be able to use RuleAddWindow for edit and add.
             //couse edit is basically add with data passed on open
+
+            /*
+            //instance of an event but in main function not the button couse i was trying to get that form other window but failed for now 
+            var iwent = new RuleAddEvents();
+            iwent.EventIdOfRule = 69;
+            iwent.EventTextOfRule = "bla bla bla";
+            */
         }
 
         private void ButtonAccept_Click(object sender, RoutedEventArgs e)
@@ -37,14 +44,37 @@ namespace BasicMechanism
             //id might be set to the number of existing rules [if that's possible]
             // don't know how to refer to the list of rules couse it's set in the xml not c#
             //mainWindow.ListOfRules.Items.Add(new NewRule { Id = 0, Rule = text });
-
-            this.Close();
+/*
+            var iwent = new RuleAddEvents();
+            iwent.EventIdOfRule = 69;
+            iwent.EventTextOfRule = text;
+*/
+            //this.Close();
         }
-
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
             AreYouSure askingWindow = new AreYouSure();
             askingWindow.ShowDialog();
         }
+        /*
+         //some weird shit. trying to set up an event
+        public class RuleAddEventsHandler
+        {
+            public event EventHandler<RuleAddEvents> RuleAddAddRule;
+            
+            public void WhatTheHellIsThatRuleAdd(RuleAddEvents ev)
+            {
+                RuleAddAddRule?.Invoke(this, ev);
+            }
+        }
+        */
+    }
+    //event template
+    public class RuleAddEvents : EventArgs
+    {
+        public int EventIdOfRule { get; set; }
+        public string EventTextOfRule { get; set; }
+        //color
+        // stuff that I want to pass in the event
     }
 }

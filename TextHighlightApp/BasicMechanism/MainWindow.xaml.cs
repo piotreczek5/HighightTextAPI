@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,11 +37,17 @@ namespace BasicMechanism
             ListOfRules.Items.Add(new NewRule { Id = numberOfRules, Rule = "what a great app" });
             ListOfRules.Items.Add(new NewRule { Id = numberOfRules, Rule = "Text from the box"});
 
+            //trying to catch the get the data from the other window
+            //RuleAddWindow eventFromRuleAdd = new RuleAddWindow();
+            //eventFromRuleAdd.
 
         }
 
         public class NewRule
         {
+            //After removing item from the list there will be missing id and than using new rule
+            //will give already existing id to the item couse of numberOfRules changed
+            //(we could try to do something if id is existing already +1 till it finds free one but....
             public int Id { get; set; }
             public string Rule { get; set; }
             //+color
@@ -83,5 +90,16 @@ namespace BasicMechanism
             if(selected != null)
                 TextOfRule.Text = selected.ToString();
         }
+    }
+
+    // idk if this will help. for now i'm tyring to do simple add so i can pass data one way. i'll try to send data form here on edit click
+    public class HandlingEventsMainWindow
+    {
+
+    }
+
+    class MainWindowEvents : EventArgs
+    {
+
     }
 }
