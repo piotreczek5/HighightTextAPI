@@ -21,6 +21,14 @@ namespace BasicMechanism
     /// </summary>
     public partial class RuleAddWindow : Window
     {
+        //CHANGE LOADED TO SOMETHING LIKE BUTTON ON CLICK AND IT SHOULD BE FINE
+        public event EventHandler Iwent;
+        protected void OnIwent()
+        {
+            if (this.Iwent != null)
+                this.Iwent(this, EventArgs.Empty);
+        }
+
         public RuleAddWindow()
         {
             InitializeComponent();
@@ -34,6 +42,14 @@ namespace BasicMechanism
             iwent.EventIdOfRule = 69;
             iwent.EventTextOfRule = "bla bla bla";
             */
+
+
+            this.Loaded += new RoutedEventHandler(RuleAddWindow_Loaded);
+        }
+
+        void RuleAddWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.OnIwent();
         }
 
         private void ButtonAccept_Click(object sender, RoutedEventArgs e)

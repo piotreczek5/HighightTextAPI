@@ -21,6 +21,7 @@ namespace BasicMechanism
     /// </summary>
     public partial class MainWindow : Window
     {
+        //CHANGE LOADED TO SOMETHING LIKE BUTTON ON CLICK AND IT SHOULD BE FINE
         public MainWindow()
         {
             InitializeComponent();
@@ -41,7 +42,24 @@ namespace BasicMechanism
             //RuleAddWindow eventFromRuleAdd = new RuleAddWindow();
             //eventFromRuleAdd.
 
+            //second try:
+            this.Loaded += new RoutedEventHandler(MainWindow_Loaded);
+
         }
+
+        void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            RuleAddWindow ruleWindow = new RuleAddWindow();
+            ruleWindow.Iwent += new EventHandler(ruleWindow_Iwent);
+            ruleWindow.ShowDialog();
+        }
+
+        void ruleWindow_Iwent(object sender, EventArgs e)
+        {
+            MessageBox.Show("rekt");
+        }
+
+        //end of second try
 
         public class NewRule
         {
