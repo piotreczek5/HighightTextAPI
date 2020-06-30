@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
@@ -22,11 +23,15 @@ namespace BasicMechanism
     public partial class RuleAddWindow : Window
     {
         //CHANGE LOADED TO SOMETHING LIKE BUTTON ON CLICK AND IT SHOULD BE FINE
-        public event EventHandler Iwent;
-        protected void OnIwent()
+        public event EventHandler<RuleAddEvents> Iwent;
+
+        // i think data should be passed here where is EventArgs.Empty so it should be moved into the button click or something like that method
+        // or i should somewhow do the variable to store data i want from what method i want
+        protected void OnIwent(RuleAddEvents e)
         {
+            EventHandler<RuleAddEvents> handler = Iwent;
             if (this.Iwent != null)
-                this.Iwent(this, EventArgs.Empty);
+                this.Iwent(this, e);
         }
 
         public RuleAddWindow()
@@ -44,15 +49,15 @@ namespace BasicMechanism
             */
 
 
-            this.Loaded += new RoutedEventHandler(RuleAddWindow_Loaded);
+            //this.ButtonAccept.Click += new RoutedEventHandler(ButtonAccept_Click);
         }
-
+        /*
         void RuleAddWindow_Loaded(object sender, RoutedEventArgs e)
         {
             this.OnIwent();
         }
-
-        private void ButtonAccept_Click(object sender, RoutedEventArgs e)
+        */
+        public void ButtonAccept_Click(object sender, RoutedEventArgs e)
         {
             string text = RuleText.Text;
             Window mainWindow = Application.Current.MainWindow;
@@ -60,12 +65,18 @@ namespace BasicMechanism
             //id might be set to the number of existing rules [if that's possible]
             // don't know how to refer to the list of rules couse it's set in the xml not c#
             //mainWindow.ListOfRules.Items.Add(new NewRule { Id = 0, Rule = text });
-/*
-            var iwent = new RuleAddEvents();
-            iwent.EventIdOfRule = 69;
-            iwent.EventTextOfRule = text;
-*/
-            //this.Close();
+            /*
+                        var iwent = new RuleAddEvents();
+                        iwent.EventIdOfRule = 69;
+                        iwent.EventTextOfRule = text;
+            */
+
+            RuleAddEvents ruleEvent = new RuleAddEvents();
+            ruleEvent.EventTextOfRule = text;
+            ruleEvent.EventIdOfRule = 69;
+
+            this.OnIwent(ruleEvent);
+            this.Close();
         }
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {

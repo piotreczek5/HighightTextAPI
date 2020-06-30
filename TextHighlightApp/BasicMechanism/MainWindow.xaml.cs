@@ -43,20 +43,31 @@ namespace BasicMechanism
             //eventFromRuleAdd.
 
             //second try:
-            this.Loaded += new RoutedEventHandler(MainWindow_Loaded);
+            //this.Loaded += new RoutedEventHandler(ButtonAdd_Click);
+
+
+
+            //this.ButtonAdd.Click += new RoutedEventHandler(ButtonAdd_Click);
 
         }
-
+/*
         void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             RuleAddWindow ruleWindow = new RuleAddWindow();
             ruleWindow.Iwent += new EventHandler(ruleWindow_Iwent);
             ruleWindow.ShowDialog();
         }
-
-        void ruleWindow_Iwent(object sender, EventArgs e)
+*/
+        void ruleWindow_Iwent(object sender, RuleAddEvents e)
         {
-            MessageBox.Show("rekt");
+            //RuleAddWindow ruleWindow = new RuleAddWindow();
+            //string text = ruleWindow.RuleText.Text;
+            //MessageBox.Show(text);
+
+            //that below works
+            //MessageBox.Show(e.EventTextOfRule);
+            ListOfRules.Items.Add(new NewRule { Id = e.EventIdOfRule, Rule = e.EventTextOfRule });
+
         }
 
         //end of second try
@@ -80,8 +91,14 @@ namespace BasicMechanism
 
         private void ButtonAdd_Click(object sender, RoutedEventArgs e)
         {
-            RuleAddWindow ruleAddWindow = new RuleAddWindow();
-            ruleAddWindow.ShowDialog();
+            RuleAddWindow ruleWindow = new RuleAddWindow();
+            ruleWindow.Iwent += new EventHandler<RuleAddEvents>(ruleWindow_Iwent);
+            ruleWindow.ShowDialog();
+
+            /*
+                        RuleAddWindow ruleAddWindow = new RuleAddWindow();
+                        ruleAddWindow.ShowDialog();
+            */
         }
 
         private void ButtonDelete_Click(object sender, RoutedEventArgs e)
@@ -91,7 +108,7 @@ namespace BasicMechanism
             {
                 object selected = ListOfRules.SelectedItem;
                 ListOfRules.Items.Remove(selected);
-                TextOfRule.Text = "";
+                TextOfRule.Text = null;
                 //Need to find a way to use AreYouSure window for every close without saving option
                 // maybe somehow pass the windows name on open so than we can use it to close that window in areyousure
                 // and not hard coded one
@@ -108,6 +125,8 @@ namespace BasicMechanism
             if(selected != null)
                 TextOfRule.Text = selected.ToString();
         }
+
+
     }
 
     // idk if this will help. for now i'm tyring to do simple add so i can pass data one way. i'll try to send data form here on edit click
