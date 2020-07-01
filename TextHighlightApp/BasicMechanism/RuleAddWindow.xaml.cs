@@ -22,21 +22,32 @@ namespace BasicMechanism
     /// </summary>
     public partial class RuleAddWindow : Window
     {
-        //CHANGE LOADED TO SOMETHING LIKE BUTTON ON CLICK AND IT SHOULD BE FINE
-        public event EventHandler<RuleAddEvents> Iwent;
+        public event EventHandler<RuleAddEvents> AddRuleEvent;
 
         // i think data should be passed here where is EventArgs.Empty so it should be moved into the button click or something like that method
         // or i should somewhow do the variable to store data i want from what method i want
-        protected void OnIwent(RuleAddEvents e)
+        protected void OnAddRuleEvent(RuleAddEvents e)
         {
-            EventHandler<RuleAddEvents> handler = Iwent;
-            if (this.Iwent != null)
-                this.Iwent(this, e);
+            EventHandler<RuleAddEvents> handler = AddRuleEvent;
+            if (this.AddRuleEvent != null)
+                this.AddRuleEvent(this, e);
         }
+
+        void mainWindow_CountOfRulesEvent(object sender, MainWindowEvents e)
+        {
+            indexFromEvent = e.CountIdEvent;
+        }
+
+
+        public int indexFromEvent;
+
 
         public RuleAddWindow()
         {
             InitializeComponent();
+
+            MainWindow mainWindow = new MainWindow();
+            mainWindow.CountOfRulesEvent += new EventHandler<MainWindowEvents>(mainWindow_CountOfRulesEvent);
             //maybe do some event handler and event that will pass the data on close / open
             // so than i would be able to use RuleAddWindow for edit and add.
             //couse edit is basically add with data passed on open
@@ -60,7 +71,8 @@ namespace BasicMechanism
         public void ButtonAccept_Click(object sender, RoutedEventArgs e)
         {
             string text = RuleText.Text;
-            Window mainWindow = Application.Current.MainWindow;
+            //Window mainWindow = Application.Current.MainWindow;
+
 
             //id might be set to the number of existing rules [if that's possible]
             // don't know how to refer to the list of rules couse it's set in the xml not c#
@@ -72,12 +84,19 @@ namespace BasicMechanism
             */
 
             RuleAddEvents ruleEvent = new RuleAddEvents();
-            ruleEvent.EventTextOfRule = text;
-            ruleEvent.EventIdOfRule = 69;
 
-            this.OnIwent(ruleEvent);
+            ruleEvent.EventTextOfRule = text;
+
+            //ListOfTypeForRules listClass = new ListOfTypeForRules();
+            //List<NewRule> list = listClass.GetListOfRules();
+            //need to make an event that passes id(count of the list of rules)
+
+            ruleEvent.EventIdOfRule = indexFromEvent;
+
+            this.OnAddRuleEvent(ruleEvent);
             this.Close();
         }
+
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
             AreYouSure askingWindow = new AreYouSure();

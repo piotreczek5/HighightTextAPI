@@ -21,7 +21,14 @@ namespace BasicMechanism
     /// </summary>
     public partial class MainWindow : Window
     {
-        //CHANGE LOADED TO SOMETHING LIKE BUTTON ON CLICK AND IT SHOULD BE FINE
+        public event EventHandler<MainWindowEvents> CountOfRulesEvent;
+
+        protected void OnCountOfRulesEvent(MainWindowEvents e)
+        {
+            if (this.CountOfRulesEvent != null)
+                this.CountOfRulesEvent(this, e);
+        }
+
         public MainWindow()
         {
             InitializeComponent();
@@ -29,25 +36,35 @@ namespace BasicMechanism
 
             ListOfRules.SelectionMode = SelectionMode.Single;
             //ListBox listOfRules = new ListBox();
-            int numberOfRules = ListOfRules.Items.Count;
+            //int numberOfRules = ListOfRules.Items.Count;
 
             //test stuff so Id doesn't work rn
+            /*
             ListOfRules.Items.Add(new NewRule { Id = numberOfRules, Rule = "First rule" });
             ListOfRules.Items.Add(new NewRule { Id = numberOfRules, Rule = "Rule index 1" });
             ListOfRules.Items.Add(new NewRule { Id = numberOfRules, Rule = "YEP COCK" });
             ListOfRules.Items.Add(new NewRule { Id = numberOfRules, Rule = "what a great app" });
             ListOfRules.Items.Add(new NewRule { Id = numberOfRules, Rule = "Text from the box"});
+            */
 
-            //trying to catch the get the data from the other window
-            //RuleAddWindow eventFromRuleAdd = new RuleAddWindow();
-            //eventFromRuleAdd.
+            //ListOfTypeForRules codeListOfRulesClass = new ListOfTypeForRules();
+            //List<NewRule> codeListOfRules = codeListOfRulesClass.GetListOfRules();
 
-            //second try:
-            //this.Loaded += new RoutedEventHandler(ButtonAdd_Click);
+            int idToPutIn = codeListOfRules.Count();
+
+            codeListOfRules.Add(new NewRule { Id = idToPutIn, Rule = "Rule from codeList" });
+            idToPutIn = codeListOfRules.Count();
+            codeListOfRules.Add(new NewRule { Id = idToPutIn, Rule = "Second rule from codeList" });
+            idToPutIn = codeListOfRules.Count();
+            codeListOfRules.Add(new NewRule { Id = idToPutIn, Rule = "Third rule from codeList" });
 
 
+            int cLORLength = codeListOfRules.Count();
 
-            //this.ButtonAdd.Click += new RoutedEventHandler(ButtonAdd_Click);
+            for (int i = 0; i < cLORLength; i++)
+            {
+                ListOfRules.Items.Add(codeListOfRules[i]);
+            }
 
         }
 /*
@@ -58,19 +75,43 @@ namespace BasicMechanism
             ruleWindow.ShowDialog();
         }
 */
-        void ruleWindow_Iwent(object sender, RuleAddEvents e)
+        void ruleWindow_AddRuleEvent(object sender, RuleAddEvents e)
         {
-            //RuleAddWindow ruleWindow = new RuleAddWindow();
-            //string text = ruleWindow.RuleText.Text;
-            //MessageBox.Show(text);
-
             //that below works
             //MessageBox.Show(e.EventTextOfRule);
-            ListOfRules.Items.Add(new NewRule { Id = e.EventIdOfRule, Rule = e.EventTextOfRule });
+            //ListOfRules.Items.Add(new NewRule { Id = e.EventIdOfRule, Rule = e.EventTextOfRule });
 
+            //ListOfTypeForRules listClass = new ListOfTypeForRules();
+            //List<NewRule> list = listClass.GetListOfRules();
+
+            // it messes up id when we delete one from the middle somewhere
+            int y = codeListOfRules.Count();
+
+            codeListOfRules.Add(new NewRule { Id = y, Rule = e.EventTextOfRule });
+            ListOfRules.Items.Add(codeListOfRules[y]);
         }
 
-        //end of second try
+
+        //it propably should be declared in the class or something :/
+        public List<NewRule> codeListOfRules = new List<NewRule>();
+
+
+        /*
+        public class ListOfTypeForRules
+        {
+            //below the declaration of list I need to add rules from database to the list and than from list to the ListOfRules
+            //need to make it public somehow, so i can access it from different classes / files
+            
+
+
+            public List<NewRule> GetListOfRules()
+            {
+                //return codeListOfRules;
+                return null;
+            }
+           
+        }
+        */
 
         public class NewRule
         {
@@ -91,8 +132,12 @@ namespace BasicMechanism
 
         private void ButtonAdd_Click(object sender, RoutedEventArgs e)
         {
+            MainWindowEvents indexSendEvent = new MainWindowEvents();
+            indexSendEvent.CountIdEvent = codeListOfRules.Count();
+            this.OnCountOfRulesEvent(indexSendEvent);
+
             RuleAddWindow ruleWindow = new RuleAddWindow();
-            ruleWindow.Iwent += new EventHandler<RuleAddEvents>(ruleWindow_Iwent);
+            ruleWindow.AddRuleEvent += new EventHandler<RuleAddEvents>(ruleWindow_AddRuleEvent);
             ruleWindow.ShowDialog();
 
             /*
@@ -107,6 +152,10 @@ namespace BasicMechanism
             if (ListOfRules.SelectedItem != null)
             {
                 object selected = ListOfRules.SelectedItem;
+                int indexOfSelectedRule = ListOfRules.SelectedIndex;
+
+                codeListOfRules.Remove(codeListOfRules[indexOfSelectedRule]);
+
                 ListOfRules.Items.Remove(selected);
                 TextOfRule.Text = null;
                 //Need to find a way to use AreYouSure window for every close without saving option
@@ -135,8 +184,8 @@ namespace BasicMechanism
 
     }
 
-    class MainWindowEvents : EventArgs
+    public class MainWindowEvents : EventArgs
     {
-
+        public int CountIdEvent { get; set; }
     }
 }
