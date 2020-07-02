@@ -7,9 +7,9 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid Cursor="Hand">
-        <Button x:Name="ButtonAdd" Content="ADD" HorizontalAlignment="Left" Margin="10,328,0,0" VerticalAlignment="Top" Width="45" Height="20" Cursor="Hand" Click="ButtonAdd_Click"/>
-        <Button x:Name="ButtonDelete" Content="DELETE" HorizontalAlignment="Left" Margin="82,328,0,0" VerticalAlignment="Top" Width="44" Height="20" Cursor="Hand" Click="ButtonDelete_Click"/>
-        <Button x:Name="ButtonEdit" Content="EDIT" HorizontalAlignment="Left" Margin="153,328,0,0" VerticalAlignment="Top" Height="20" Width="45" Click="ButtonEdit_Click"/>
+        <Button x:Name="ButtonAdd" Content="ADD" HorizontalAlignment="Left" Margin="10,328,0,0" VerticalAlignment="Top" Width="45" Height="20" Cursor="Hand" Click="ButtonAdd_Click" Background="#FF7FC927"/>
+        <Button x:Name="ButtonDelete" Content="DELETE" HorizontalAlignment="Left" Margin="154,328,0,0" VerticalAlignment="Top" Width="44" Height="20" Cursor="Hand" Click="ButtonDelete_Click" Background="#FFE82E2E"/>
+        <Button x:Name="ButtonEdit" Content="EDIT" HorizontalAlignment="Left" Margin="82,328,0,0" VerticalAlignment="Top" Height="20" Width="44" Click="ButtonEdit_Click" Background="#FF2586E6"/>
         <Label Content="List of Rules:" HorizontalAlignment="Left" Margin="10,15,0,0" VerticalAlignment="Top" Width="188"/>
         <ListView x:Name="ListOfRules" Margin="10,41,602,111" SelectionChanged="ListOfRules_SelectionChanged"/>
         <TextBlock x:Name="TextOfRule" HorizontalAlignment="Left" Margin="278,41,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="164" Width="456" Cursor="Arrow"/>
