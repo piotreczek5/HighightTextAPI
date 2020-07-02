@@ -21,34 +21,28 @@ namespace BasicMechanism
     /// </summary>
     public partial class MainWindow : Window
     {
-        public event EventHandler<MainWindowEvents> CountOfRulesEvent;
+        public event EventHandler<MainWindowAddEvent> CountOfRulesEvent;
+        public event EventHandler<MainWindowEditEvent> RuleToEditEvent;
 
-        protected void OnCountOfRulesEvent(MainWindowEvents e)
+        protected void OnCountOfRulesEvent(MainWindowAddEvent e)
         {
             if (this.CountOfRulesEvent != null)
                 this.CountOfRulesEvent(this, e);
         }
 
+        protected void OnRuleToEditEvent(MainWindowEditEvent e)
+        {
+            if (this.RuleToEditEvent != null)
+                this.RuleToEditEvent(this, e);
+        }
+
         public MainWindow()
         {
             InitializeComponent();
+
             Application.Current.MainWindow = this;
 
             ListOfRules.SelectionMode = SelectionMode.Single;
-            //ListBox listOfRules = new ListBox();
-            //int numberOfRules = ListOfRules.Items.Count;
-
-            //test stuff so Id doesn't work rn
-            /*
-            ListOfRules.Items.Add(new NewRule { Id = numberOfRules, Rule = "First rule" });
-            ListOfRules.Items.Add(new NewRule { Id = numberOfRules, Rule = "Rule index 1" });
-            ListOfRules.Items.Add(new NewRule { Id = numberOfRules, Rule = "YEP COCK" });
-            ListOfRules.Items.Add(new NewRule { Id = numberOfRules, Rule = "what a great app" });
-            ListOfRules.Items.Add(new NewRule { Id = numberOfRules, Rule = "Text from the box"});
-            */
-
-            //ListOfTypeForRules codeListOfRulesClass = new ListOfTypeForRules();
-            //List<NewRule> codeListOfRules = codeListOfRulesClass.GetListOfRules();
 
             int idToPutIn = codeListOfRules.Count();
 
@@ -85,10 +79,38 @@ namespace BasicMechanism
             //List<NewRule> list = listClass.GetListOfRules();
 
             // it messes up id when we delete one from the middle somewhere
-            int y = codeListOfRules.Count();
+            //int y = codeListOfRules.Count();
+            int y = e.EventIdOfRule;
 
-            codeListOfRules.Add(new NewRule { Id = y, Rule = e.EventTextOfRule });
-            ListOfRules.Items.Add(codeListOfRules[y]);
+            bool isThisAdd = false;
+            try
+            {
+                codeListOfRules.RemoveAt(y);
+            }
+            catch
+            {
+                codeListOfRules.Insert(y, new NewRule { Id = y, Rule = e.EventTextOfRule });
+                isThisAdd = true;
+            }
+
+            if(isThisAdd == false)
+                codeListOfRules.Insert(y, new NewRule { Id = y, Rule = e.EventTextOfRule });
+
+
+            try
+            {
+                ListOfRules.Items.RemoveAt(y);
+            }
+            catch
+            {
+                ListOfRules.Items.Insert(y, codeListOfRules[y]);
+                isThisAdd = true;
+            }
+
+            if(isThisAdd == false)
+                ListOfRules.Items.Insert(y, codeListOfRules[y]);
+
+            //I could try to clear and fill again list and listview... but it's shit performence
         }
 
 
@@ -132,12 +154,14 @@ namespace BasicMechanism
 
         private void ButtonAdd_Click(object sender, RoutedEventArgs e)
         {
-            MainWindowEvents indexSendEvent = new MainWindowEvents();
+            MainWindowAddEvent indexSendEvent = new MainWindowAddEvent();
             indexSendEvent.CountIdEvent = codeListOfRules.Count();
             this.OnCountOfRulesEvent(indexSendEvent);
 
             RuleAddWindow ruleWindow = new RuleAddWindow();
+            ruleWindow.indexFromEvent = codeListOfRules.Count();
             ruleWindow.AddRuleEvent += new EventHandler<RuleAddEvents>(ruleWindow_AddRuleEvent);
+            TextOfRule.Text = null;
             ruleWindow.ShowDialog();
 
             /*
@@ -161,6 +185,7 @@ namespace BasicMechanism
                 //Need to find a way to use AreYouSure window for every close without saving option
                 // maybe somehow pass the windows name on open so than we can use it to close that window in areyousure
                 // and not hard coded one
+                DrawingTheListView();
             }
             else
             {
@@ -174,18 +199,88 @@ namespace BasicMechanism
             if(selected != null)
                 TextOfRule.Text = selected.ToString();
         }
+        
+        private void ButtonEdit_Click(object sender, RoutedEventArgs e)
+        {
+            if(ListOfRules.SelectedItem != null)
+            {
+                int selectedIndex = ListOfRules.SelectedIndex;
+                int selectedId = codeListOfRules[selectedIndex].Id;
+                string selectedText = codeListOfRules[selectedIndex].Rule;
+                //+color
 
+                MainWindowEditEvent editEvent = new MainWindowEditEvent();
+                editEvent.idToEdit = selectedId;
+                editEvent.textToEdit = selectedText;
 
+                RuleAddWindow ruleWindow = new RuleAddWindow();
+                ruleWindow.indexFromEvent = selectedId;
+                ruleWindow.RuleText.Text = selectedText;
+                ruleWindow.AddRuleEvent += new EventHandler<RuleAddEvents>(ruleWindow_AddRuleEvent);
+
+                this.OnRuleToEditEvent(editEvent);
+                TextOfRule.Text = null;
+                ruleWindow.ShowDialog();
+            }
+            else
+                TextOfRule.Text = "Please select item from the list you want to edit.";
+            
+        }
+
+        public void DrawingTheListView()
+        {
+            List<NewRule> tempList = new List<NewRule>();
+
+            int lenOfList = codeListOfRules.Count();
+            int ruleCounter = 0;
+
+            for(int i =0; i < lenOfList; i++)
+            {
+                if(codeListOfRules[i] == null)
+                {
+                    //nothing just skip it
+                }
+                else
+                {
+                    tempList.Insert(ruleCounter, new NewRule { Id = ruleCounter, Rule = codeListOfRules[i].Rule});
+                    //tempList[ruleCounter] = codeListOfRules[i];
+                    ruleCounter++;
+                }
+            }
+            /*
+            int ruleCounter = 0;
+            foreach (object rule in codeListOfRules)
+            {
+                tempList[ruleCounter] = (NewRule)rule;
+                ruleCounter++;
+            }
+            */
+
+            ListOfRules.Items.Clear();
+
+            codeListOfRules = tempList;
+
+            lenOfList = codeListOfRules.Count();
+
+            for(int i =0; i < lenOfList; i++)
+            {
+                ListOfRules.Items.Insert(i, codeListOfRules[i]);
+            }
+
+        }
     }
 
-    // idk if this will help. for now i'm tyring to do simple add so i can pass data one way. i'll try to send data form here on edit click
-    public class HandlingEventsMainWindow
-    {
 
-    }
 
-    public class MainWindowEvents : EventArgs
+    public class MainWindowAddEvent : EventArgs
     {
         public int CountIdEvent { get; set; }
+    }
+
+    public class MainWindowEditEvent : EventArgs
+    {
+        public int idToEdit { get; set; }
+        public string textToEdit { get; set; }
+        //+ color
     }
 }

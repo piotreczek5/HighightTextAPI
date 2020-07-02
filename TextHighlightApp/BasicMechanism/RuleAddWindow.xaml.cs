@@ -33,11 +33,16 @@ namespace BasicMechanism
                 this.AddRuleEvent(this, e);
         }
 
-        void mainWindow_CountOfRulesEvent(object sender, MainWindowEvents e)
+        void mainWindow_CountOfRulesEvent(object sender, MainWindowAddEvent e)
         {
-            indexFromEvent = e.CountIdEvent;
+            //indexFromEvent = e.CountIdEvent;
         }
 
+        void mainWindow_RuleToEditEvent(object sender, MainWindowEditEvent e)
+        {
+            //RuleText.Text = e.textToEdit;
+           // indexFromEvent = e.idToEdit;
+        }
 
         public int indexFromEvent;
 
@@ -47,7 +52,8 @@ namespace BasicMechanism
             InitializeComponent();
 
             MainWindow mainWindow = new MainWindow();
-            mainWindow.CountOfRulesEvent += new EventHandler<MainWindowEvents>(mainWindow_CountOfRulesEvent);
+            mainWindow.CountOfRulesEvent += new EventHandler<MainWindowAddEvent>(mainWindow_CountOfRulesEvent);
+            mainWindow.RuleToEditEvent += new EventHandler<MainWindowEditEvent>(mainWindow_RuleToEditEvent);
             //maybe do some event handler and event that will pass the data on close / open
             // so than i would be able to use RuleAddWindow for edit and add.
             //couse edit is basically add with data passed on open
