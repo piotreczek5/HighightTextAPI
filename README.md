@@ -1,5 +1,3 @@
 HighightTextAPI
-This god damn Kraken is dumb and idk how to use it
-I almost lost my all changes because readme file was updated on remote and not on local master.
-mmaaan this sucks that's all i want to say.
+App to highlight the text u want in the text u paste in. It's in developement state.
 Also wpf is yaiks.
