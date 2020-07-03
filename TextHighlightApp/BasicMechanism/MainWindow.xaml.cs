@@ -13,6 +13,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Xceed.Wpf.Toolkit;
+using Xceed.Wpf.Toolkit.Core.Converters;
 
 namespace BasicMechanism
 {
@@ -44,13 +46,18 @@ namespace BasicMechanism
 
             ListOfRules.SelectionMode = SelectionMode.Single;
 
+            // messing up with color properties
+            Color color = (Color)ColorConverter.ConvertFromString("Yellow");
+            string strColor = color.ToString();
+            //end of colors
+/*
             int idToPutIn = codeListOfRules.Count();
 
-            codeListOfRules.Add(new NewRule { Id = idToPutIn, Rule = "Rule from codeList" });
+            codeListOfRules.Add(new NewRule { Id = idToPutIn, Rule = "Rule from codeList", Color =  strColor});
             idToPutIn = codeListOfRules.Count();
-            codeListOfRules.Add(new NewRule { Id = idToPutIn, Rule = "Second rule from codeList" });
+            codeListOfRules.Add(new NewRule { Id = idToPutIn, Rule = "Second rule from codeList", Color = "Yellow" });
             idToPutIn = codeListOfRules.Count();
-            codeListOfRules.Add(new NewRule { Id = idToPutIn, Rule = "Third rule from codeList" });
+            codeListOfRules.Add(new NewRule { Id = idToPutIn, Rule = "Third rule from codeList", Color = "Blue" });
 
 
             int cLORLength = codeListOfRules.Count();
@@ -59,64 +66,81 @@ namespace BasicMechanism
             {
                 ListOfRules.Items.Add(codeListOfRules[i]);
             }
-
-        }
-/*
-        void MainWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            RuleAddWindow ruleWindow = new RuleAddWindow();
-            ruleWindow.Iwent += new EventHandler(ruleWindow_Iwent);
-            ruleWindow.ShowDialog();
-        }
 */
+        }
+
         void ruleWindow_AddRuleEvent(object sender, RuleAddEvents e)
         {
-            //that below works
-            //MessageBox.Show(e.EventTextOfRule);
-            //ListOfRules.Items.Add(new NewRule { Id = e.EventIdOfRule, Rule = e.EventTextOfRule });
+            int passedId = e.EventIdOfRule;
 
-            //ListOfTypeForRules listClass = new ListOfTypeForRules();
-            //List<NewRule> list = listClass.GetListOfRules();
+            bool isItAddCall= false;
 
-            // it messes up id when we delete one from the middle somewhere
-            //int y = codeListOfRules.Count();
-            int y = e.EventIdOfRule;
-
-            bool isThisAdd = false;
+            ListViewItem ruleItem = new ListViewItem();
             try
             {
-                codeListOfRules.RemoveAt(y);
+                codeListOfRules.RemoveAt(passedId);
             }
             catch
             {
-                codeListOfRules.Insert(y, new NewRule { Id = y, Rule = e.EventTextOfRule });
-                isThisAdd = true;
+                codeListOfRules.Insert(passedId, new NewRule { Id = passedId, Rule = e.EventTextOfRule , Color = e.EventColorOfRule});
+
+                ruleItem.Content = passedId + ") " + e.EventTextOfRule + "//" + e.EventColorOfRule;
+
+                isItAddCall = true;
             }
 
-            if(isThisAdd == false)
-                codeListOfRules.Insert(y, new NewRule { Id = y, Rule = e.EventTextOfRule });
+            if(isItAddCall == false)
+            {
+                //Xceed.Wpf.Toolkit.MessageBox.Show(e.EventColorOfRule);
+                if (e.EventColorOfRule == "")
+                {
+                    codeListOfRules.Insert(passedId, new NewRule { Id = passedId, Rule = e.EventTextOfRule, Color = colorOfEditedRule });
+                    ruleItem.Content = passedId + ") " + e.EventTextOfRule + "//" + colorOfEditedRule;
 
+                    ruleItem.Foreground = StringToBrush(colorOfEditedRule);
+                }
+                else
+                {
+                    codeListOfRules.Insert(passedId, new NewRule { Id = passedId, Rule = e.EventTextOfRule, Color = e.EventColorOfRule });
+                    ruleItem.Content = passedId + ") " + e.EventTextOfRule + "//" + e.EventColorOfRule;
+
+
+                    ruleItem.Foreground = StringToBrush(e.EventColorOfRule);
+                }
+            }
 
             try
             {
-                ListOfRules.Items.RemoveAt(y);
+                ListOfRules.Items.RemoveAt(passedId);
             }
             catch
             {
-                ListOfRules.Items.Insert(y, codeListOfRules[y]);
-                isThisAdd = true;
+                ruleItem.Foreground = StringToBrush(e.EventColorOfRule);
+                //ListOfRules.Items.Insert(passedId, codeListOfRules[passedId]);
+                ListOfRules.Items.Insert(passedId, ruleItem);
+                isItAddCall = true;
             }
 
-            if(isThisAdd == false)
-                ListOfRules.Items.Insert(y, codeListOfRules[y]);
+            if(isItAddCall == false)
+            {
+               //ListOfRules.Items.Insert(passedId, codeListOfRules[passedId]);
+                ListOfRules.Items.Insert(passedId, ruleItem);
+            }
+        }
 
-            //I could try to clear and fill again list and listview... but it's shit performence
+        //should somehow handle exception when i'll pass a string that cannot be converted into color than brush...
+        public Brush StringToBrush(string str)
+        {
+            Color color = (Color)ColorConverter.ConvertFromString(str);
+            Brush brushItIs = new SolidColorBrush(color);
+
+            return brushItIs;
         }
 
 
         //it propably should be declared in the class or something :/
         public List<NewRule> codeListOfRules = new List<NewRule>();
-
+        public string colorOfEditedRule;
 
         /*
         public class ListOfTypeForRules
@@ -142,12 +166,14 @@ namespace BasicMechanism
             //(we could try to do something if id is existing already +1 till it finds free one but....
             public int Id { get; set; }
             public string Rule { get; set; }
-            //+color
+            //public string Color { get; set; }
+            public string Color { get; set; }
+
 
             //override ToString() to get text in the viewBox
             public override string ToString()
             {
-                return Id + ") " + Rule;
+                return Id + ") " + Rule + "//" + Color;
             }
         }
 
@@ -159,15 +185,14 @@ namespace BasicMechanism
             this.OnCountOfRulesEvent(indexSendEvent);
 
             RuleAddWindow ruleWindow = new RuleAddWindow();
+
             ruleWindow.indexFromEvent = codeListOfRules.Count();
             ruleWindow.AddRuleEvent += new EventHandler<RuleAddEvents>(ruleWindow_AddRuleEvent);
+            ruleWindow.isThisAdd = true;
+
             TextOfRule.Text = null;
             ruleWindow.ShowDialog();
 
-            /*
-                        RuleAddWindow ruleAddWindow = new RuleAddWindow();
-                        ruleAddWindow.ShowDialog();
-            */
         }
 
         private void ButtonDelete_Click(object sender, RoutedEventArgs e)
@@ -195,6 +220,7 @@ namespace BasicMechanism
 
         private void ListOfRules_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            //now it's showing system.windows.bla bla bla in the text window when we are using list view items insted of new rule class members
             object selected = ListOfRules.SelectedItem;
             if(selected != null)
                 TextOfRule.Text = selected.ToString();
@@ -202,23 +228,29 @@ namespace BasicMechanism
         
         private void ButtonEdit_Click(object sender, RoutedEventArgs e)
         {
+            // I can try do somehting like saving color here and changing it only if new non-null color is passed
             if(ListOfRules.SelectedItem != null)
             {
                 int selectedIndex = ListOfRules.SelectedIndex;
                 int selectedId = codeListOfRules[selectedIndex].Id;
                 string selectedText = codeListOfRules[selectedIndex].Rule;
-                //+color
 
-                MainWindowEditEvent editEvent = new MainWindowEditEvent();
-                editEvent.idToEdit = selectedId;
-                editEvent.textToEdit = selectedText;
+                colorOfEditedRule = codeListOfRules[selectedIndex].Color;
+
+                //MainWindowEditEvent editEvent = new MainWindowEditEvent();
+                //editEvent.idToEdit = selectedId;
+                //editEvent.textToEdit = selectedText;
+                //editEvent.colorToEdit = selectedColor;
 
                 RuleAddWindow ruleWindow = new RuleAddWindow();
                 ruleWindow.indexFromEvent = selectedId;
                 ruleWindow.RuleText.Text = selectedText;
+                ruleWindow.EditRuleDisclaimer.Text = "If you don't pick a color while editing the rule it will remain the same as before.";
+                ruleWindow.isThisAdd = false;
+
                 ruleWindow.AddRuleEvent += new EventHandler<RuleAddEvents>(ruleWindow_AddRuleEvent);
 
-                this.OnRuleToEditEvent(editEvent);
+                //this.OnRuleToEditEvent(editEvent);
                 TextOfRule.Text = null;
                 ruleWindow.ShowDialog();
             }
@@ -230,6 +262,9 @@ namespace BasicMechanism
         public void DrawingTheListView()
         {
             List<NewRule> tempList = new List<NewRule>();
+            ListView tempView = new ListView();
+
+            ListViewItem ruleItem = new ListViewItem();
 
             int lenOfList = codeListOfRules.Count();
             int ruleCounter = 0;
@@ -242,34 +277,34 @@ namespace BasicMechanism
                 }
                 else
                 {
-                    tempList.Insert(ruleCounter, new NewRule { Id = ruleCounter, Rule = codeListOfRules[i].Rule});
-                    //tempList[ruleCounter] = codeListOfRules[i];
+                    tempList.Insert(ruleCounter, new NewRule { Id = ruleCounter, Rule = codeListOfRules[i].Rule, Color = codeListOfRules[i].Color});
+
+                    ruleItem.Foreground = StringToBrush(codeListOfRules[i].Color);
+                    ruleItem.Content = ruleCounter + ") " + codeListOfRules[i].Rule + "//" + codeListOfRules[i].Color;
+
+                    //THROWS THE EXCEPTION AND CRASHES THE APP. (system.invalidOperationException (already member of parented something bla bla bla)
+                    tempView.Items.Insert(ruleCounter, ruleItem);
+
                     ruleCounter++;
                 }
             }
-            /*
-            int ruleCounter = 0;
-            foreach (object rule in codeListOfRules)
-            {
-                tempList[ruleCounter] = (NewRule)rule;
-                ruleCounter++;
-            }
-            */
 
             ListOfRules.Items.Clear();
 
             codeListOfRules = tempList;
 
-            lenOfList = codeListOfRules.Count();
+            //lenOfList = codeListOfRules.Count();
 
+            ListOfRules = tempView;
+
+            /*
             for(int i =0; i < lenOfList; i++)
             {
                 ListOfRules.Items.Insert(i, codeListOfRules[i]);
             }
-
+            */
         }
     }
-
 
 
     public class MainWindowAddEvent : EventArgs
@@ -281,6 +316,6 @@ namespace BasicMechanism
     {
         public int idToEdit { get; set; }
         public string textToEdit { get; set; }
-        //+ color
+        public string colorToEdit { get; set; }
     }
 }
