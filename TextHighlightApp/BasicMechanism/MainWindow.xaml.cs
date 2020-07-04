@@ -21,6 +21,14 @@ namespace BasicMechanism
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+     
+    //TODO: 
+    //  V FIX DELETE BUTTON TO REWRITE THE LIST WITH COLORS ETC
+    //  - FIX DISPLAY OF THE RULE IN MAIN WINDOW SO IT DOESN'T SHOW SYSTEM.WINDOW. . ..
+    //  V FIX THE AREYOUSURE WINDOW TO CLOSE RIGHT WINDOWS NOT EVERY WINDOW
+    //  V ^THAT MIGHT BE AN ISSUE THAT MAINWINDOW HAS 2 INSTANCES AND THAT'S THE PROBLEM WITH NOT CLOSING APLICATION (COUSE ONE MAIN WW IS RUNNING IN THE BG)
+    //  - MAYBE TRY TO USE NEW RULE CLASS MEMBERS BUT ASSIGN THEM TO THE LISTVIEWITEMS SO I CAN CHANGE IT'S FOREGROUND COLOR IF IT'S POSSIBLE
+
     public partial class MainWindow : Window
     {
         public event EventHandler<MainWindowAddEvent> CountOfRulesEvent;
@@ -47,10 +55,14 @@ namespace BasicMechanism
             ListOfRules.SelectionMode = SelectionMode.Single;
 
             // messing up with color properties
+
+            /*
             Color color = (Color)ColorConverter.ConvertFromString("Yellow");
             string strColor = color.ToString();
+            */
+
             //end of colors
-/*
+            /*
             int idToPutIn = codeListOfRules.Count();
 
             codeListOfRules.Add(new NewRule { Id = idToPutIn, Rule = "Rule from codeList", Color =  strColor});
@@ -161,9 +173,6 @@ namespace BasicMechanism
 
         public class NewRule
         {
-            //After removing item from the list there will be missing id and than using new rule
-            //will give already existing id to the item couse of numberOfRules changed
-            //(we could try to do something if id is existing already +1 till it finds free one but....
             public int Id { get; set; }
             public string Rule { get; set; }
             //public string Color { get; set; }
@@ -197,7 +206,6 @@ namespace BasicMechanism
 
         private void ButtonDelete_Click(object sender, RoutedEventArgs e)
         {
-            //ListOfRules.Items.Remove("Dogshit");
             if (ListOfRules.SelectedItem != null)
             {
                 object selected = ListOfRules.SelectedItem;
@@ -222,7 +230,7 @@ namespace BasicMechanism
         {
             //now it's showing system.windows.bla bla bla in the text window when we are using list view items insted of new rule class members
             object selected = ListOfRules.SelectedItem;
-            if(selected != null)
+            if (selected != null)
                 TextOfRule.Text = selected.ToString();
         }
         
@@ -264,10 +272,11 @@ namespace BasicMechanism
             List<NewRule> tempList = new List<NewRule>();
             ListView tempView = new ListView();
 
-            ListViewItem ruleItem = new ListViewItem();
 
             int lenOfList = codeListOfRules.Count();
             int ruleCounter = 0;
+
+            ListOfRules.Items.Clear();
 
             for(int i =0; i < lenOfList; i++)
             {
@@ -279,23 +288,25 @@ namespace BasicMechanism
                 {
                     tempList.Insert(ruleCounter, new NewRule { Id = ruleCounter, Rule = codeListOfRules[i].Rule, Color = codeListOfRules[i].Color});
 
+                    ListViewItem ruleItem = new ListViewItem();
+
                     ruleItem.Foreground = StringToBrush(codeListOfRules[i].Color);
                     ruleItem.Content = ruleCounter + ") " + codeListOfRules[i].Rule + "//" + codeListOfRules[i].Color;
 
                     //THROWS THE EXCEPTION AND CRASHES THE APP. (system.invalidOperationException (already member of parented something bla bla bla)
-                    tempView.Items.Insert(ruleCounter, ruleItem);
-
+                    //tempView.Items.Insert(ruleCounter, ruleItem);
+                    ListOfRules.Items.Insert(ruleCounter, ruleItem);
                     ruleCounter++;
                 }
             }
 
-            ListOfRules.Items.Clear();
+            //ListOfRules.Items.Clear();
 
             codeListOfRules = tempList;
 
             //lenOfList = codeListOfRules.Count();
 
-            ListOfRules = tempView;
+            //ListOfRules = tempView;
 
             /*
             for(int i =0; i < lenOfList; i++)

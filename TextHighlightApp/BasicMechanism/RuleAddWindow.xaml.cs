@@ -25,6 +25,7 @@ namespace BasicMechanism
     public partial class RuleAddWindow : Window
     {
         //NEED TO CHANGE ID, COLOR ETC TO NULL ON CANCEL EDIT / ADD
+        //i think i do not need to accualy do it, couse it's always overwrited anywyas
         public event EventHandler<RuleAddEvents> AddRuleEvent;
 
         // i think data should be passed here where is EventArgs.Empty so it should be moved into the button click or something like that method
@@ -66,11 +67,11 @@ namespace BasicMechanism
         public RuleAddWindow()
         {
             InitializeComponent();
-
+/*
             MainWindow mainWindow = new MainWindow();
             mainWindow.CountOfRulesEvent += new EventHandler<MainWindowAddEvent>(mainWindow_CountOfRulesEvent);
             mainWindow.RuleToEditEvent += new EventHandler<MainWindowEditEvent>(mainWindow_RuleToEditEvent);
-
+*/
         }
 
         public void ButtonAccept_Click(object sender, RoutedEventArgs e)
@@ -78,11 +79,19 @@ namespace BasicMechanism
             string text = RuleText.Text;
             string color = ColorPickerRule.SelectedColorText;
 
+
+            if (text == "" || text == null)
+            {
+                System.Windows.MessageBox.Show("Please write the text of your rule!");
+                return;
+            }
+
             if (color == "" && isThisAdd == true)
             {
                     System.Windows.MessageBox.Show("Please select color for your rule!");
                     return;
             }
+
 
             RuleAddEvents ruleEvent = new RuleAddEvents();
 
