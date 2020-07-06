@@ -81,95 +81,10 @@ namespace BasicMechanism
 */
         }
 
-        void ruleWindow_AddRuleEvent(object sender, RuleAddEvents e)
-        {
-            int passedId = e.EventIdOfRule;
-
-            bool isItAddCall= false;
-
-            ListViewItem ruleItem = new ListViewItem();
-            try
-            {
-                codeListOfRules.RemoveAt(passedId);
-            }
-            catch
-            {
-                codeListOfRules.Insert(passedId, new NewRule { Id = passedId, Rule = e.EventTextOfRule , Color = e.EventColorOfRule});
-
-                ruleItem.Content = passedId + ") " + e.EventTextOfRule + "//" + e.EventColorOfRule;
-
-                isItAddCall = true;
-            }
-
-            if(isItAddCall == false)
-            {
-                //Xceed.Wpf.Toolkit.MessageBox.Show(e.EventColorOfRule);
-                if (e.EventColorOfRule == "")
-                {
-                    codeListOfRules.Insert(passedId, new NewRule { Id = passedId, Rule = e.EventTextOfRule, Color = colorOfEditedRule });
-                    ruleItem.Content = passedId + ") " + e.EventTextOfRule + "//" + colorOfEditedRule;
-
-                    ruleItem.Foreground = StringToBrush(colorOfEditedRule);
-                }
-                else
-                {
-                    codeListOfRules.Insert(passedId, new NewRule { Id = passedId, Rule = e.EventTextOfRule, Color = e.EventColorOfRule });
-                    ruleItem.Content = passedId + ") " + e.EventTextOfRule + "//" + e.EventColorOfRule;
-
-
-                    ruleItem.Foreground = StringToBrush(e.EventColorOfRule);
-                }
-            }
-
-            try
-            {
-                ListOfRules.Items.RemoveAt(passedId);
-            }
-            catch
-            {
-                ruleItem.Foreground = StringToBrush(e.EventColorOfRule);
-                //ListOfRules.Items.Insert(passedId, codeListOfRules[passedId]);
-                ListOfRules.Items.Insert(passedId, ruleItem);
-                isItAddCall = true;
-            }
-
-            if(isItAddCall == false)
-            {
-               //ListOfRules.Items.Insert(passedId, codeListOfRules[passedId]);
-                ListOfRules.Items.Insert(passedId, ruleItem);
-            }
-        }
-
-        //should somehow handle exception when i'll pass a string that cannot be converted into color than brush...
-        public Brush StringToBrush(string str)
-        {
-            Color color = (Color)ColorConverter.ConvertFromString(str);
-            Brush brushItIs = new SolidColorBrush(color);
-
-            return brushItIs;
-        }
-
-
         //it propably should be declared in the class or something :/
         public List<NewRule> codeListOfRules = new List<NewRule>();
         public string colorOfEditedRule;
 
-        /*
-        public class ListOfTypeForRules
-        {
-            //below the declaration of list I need to add rules from database to the list and than from list to the ListOfRules
-            //need to make it public somehow, so i can access it from different classes / files
-            
-
-
-            public List<NewRule> GetListOfRules()
-            {
-                //return codeListOfRules;
-                return null;
-            }
-           
-        }
-        */
 
         public class NewRule
         {
@@ -182,10 +97,12 @@ namespace BasicMechanism
             //override ToString() to get text in the viewBox
             public override string ToString()
             {
-                return Id + ") " + Rule + "//" + Color;
+                return $"{Id}){Rule}//{Color}";
+                    //Id + ") " + Rule + "//" + Color;
             }
         }
 
+        //-------------Buttons and List of Rules ------------
 
         private void ButtonAdd_Click(object sender, RoutedEventArgs e)
         {
@@ -201,6 +118,39 @@ namespace BasicMechanism
 
             TextOfRule.Text = null;
             ruleWindow.ShowDialog();
+
+        }
+
+        private void ButtonEdit_Click(object sender, RoutedEventArgs e)
+        {
+            // I can try do somehting like saving color here and changing it only if new non-null color is passed
+            if (ListOfRules.SelectedItem != null)
+            {
+                int selectedIndex = ListOfRules.SelectedIndex;
+                int selectedId = codeListOfRules[selectedIndex].Id;
+                string selectedText = codeListOfRules[selectedIndex].Rule;
+
+                colorOfEditedRule = codeListOfRules[selectedIndex].Color;
+
+                //MainWindowEditEvent editEvent = new MainWindowEditEvent();
+                //editEvent.idToEdit = selectedId;
+                //editEvent.textToEdit = selectedText;
+                //editEvent.colorToEdit = selectedColor;
+
+                RuleAddWindow ruleWindow = new RuleAddWindow();
+                ruleWindow.indexFromEvent = selectedId;
+                ruleWindow.RuleText.Text = selectedText;
+                ruleWindow.EditRuleDisclaimer.Text = "If you don't pick a color while editing the rule it will remain the same as before.";
+                ruleWindow.isThisAdd = false;
+
+                ruleWindow.AddRuleEvent += new EventHandler<RuleAddEvents>(ruleWindow_AddRuleEvent);
+
+                //this.OnRuleToEditEvent(editEvent);
+                TextOfRule.Text = null;
+                ruleWindow.ShowDialog();
+            }
+            else
+                TextOfRule.Text = "Please select item from the list you want to edit.";
 
         }
 
@@ -233,39 +183,8 @@ namespace BasicMechanism
             if (selected != null)
                 TextOfRule.Text = selected.ToString();
         }
-        
-        private void ButtonEdit_Click(object sender, RoutedEventArgs e)
-        {
-            // I can try do somehting like saving color here and changing it only if new non-null color is passed
-            if(ListOfRules.SelectedItem != null)
-            {
-                int selectedIndex = ListOfRules.SelectedIndex;
-                int selectedId = codeListOfRules[selectedIndex].Id;
-                string selectedText = codeListOfRules[selectedIndex].Rule;
 
-                colorOfEditedRule = codeListOfRules[selectedIndex].Color;
-
-                //MainWindowEditEvent editEvent = new MainWindowEditEvent();
-                //editEvent.idToEdit = selectedId;
-                //editEvent.textToEdit = selectedText;
-                //editEvent.colorToEdit = selectedColor;
-
-                RuleAddWindow ruleWindow = new RuleAddWindow();
-                ruleWindow.indexFromEvent = selectedId;
-                ruleWindow.RuleText.Text = selectedText;
-                ruleWindow.EditRuleDisclaimer.Text = "If you don't pick a color while editing the rule it will remain the same as before.";
-                ruleWindow.isThisAdd = false;
-
-                ruleWindow.AddRuleEvent += new EventHandler<RuleAddEvents>(ruleWindow_AddRuleEvent);
-
-                //this.OnRuleToEditEvent(editEvent);
-                TextOfRule.Text = null;
-                ruleWindow.ShowDialog();
-            }
-            else
-                TextOfRule.Text = "Please select item from the list you want to edit.";
-            
-        }
+        //------------ Helping methods -------------
 
         public void DrawingTheListView()
         {
@@ -315,9 +234,104 @@ namespace BasicMechanism
             }
             */
         }
+
+        //should somehow handle exception when i'll pass a string that cannot be converted into color than brush...
+        public Brush StringToBrush(string str)
+        {
+            Color color = (Color)ColorConverter.ConvertFromString(str);
+            Brush brushItIs = new SolidColorBrush(color);
+
+            return brushItIs;
+        }
+
+        //-------------Event from RuleAddWindow-------------
+        void ruleWindow_AddRuleEvent(object sender, RuleAddEvents e)
+        {
+            int passedId = e.EventIdOfRule;
+
+            bool isItAddCall = false;
+
+            ListViewItem ruleItem = new ListViewItem();
+            try
+            {
+                codeListOfRules.RemoveAt(passedId);
+            }
+            catch
+            {
+                codeListOfRules.Insert(passedId, new NewRule { Id = passedId, Rule = e.EventTextOfRule, Color = e.EventColorOfRule });
+
+                ruleItem.Content = passedId + ") " + e.EventTextOfRule + "//" + e.EventColorOfRule;
+
+                isItAddCall = true;
+            }
+
+            if (isItAddCall == false)
+            {
+                //Xceed.Wpf.Toolkit.MessageBox.Show(e.EventColorOfRule);
+                if (e.EventColorOfRule == "")
+                {
+                    codeListOfRules.Insert(passedId, new NewRule { Id = passedId, Rule = e.EventTextOfRule, Color = colorOfEditedRule });
+                    ruleItem.Content = passedId + ") " + e.EventTextOfRule + "//" + colorOfEditedRule;
+
+                    ruleItem.Foreground = StringToBrush(colorOfEditedRule);
+                }
+                else
+                {
+                    codeListOfRules.Insert(passedId, new NewRule { Id = passedId, Rule = e.EventTextOfRule, Color = e.EventColorOfRule });
+                    ruleItem.Content = passedId + ") " + e.EventTextOfRule + "//" + e.EventColorOfRule;
+
+
+                    ruleItem.Foreground = StringToBrush(e.EventColorOfRule);
+                }
+            }
+
+            try
+            {
+                ListOfRules.Items.RemoveAt(passedId);
+            }
+            catch
+            {
+                ruleItem.Foreground = StringToBrush(e.EventColorOfRule);
+                //ListOfRules.Items.Insert(passedId, codeListOfRules[passedId]);
+                ListOfRules.Items.Insert(passedId, ruleItem);
+                isItAddCall = true;
+            }
+
+            if (isItAddCall == false)
+            {
+                //ListOfRules.Items.Insert(passedId, codeListOfRules[passedId]);
+                ListOfRules.Items.Insert(passedId, ruleItem);
+            }
+        }
+        //_____________________ End of Rule Management tab _______________________
+
+        // Idk if that shouldn't be in the second project file:
+        //_____________________ Start of Rule Usage tab ________________________
+        private void ClearTextButton_Click(object sender, RoutedEventArgs e)
+        {
+            //RawText.Text = null;
+            RawText.Document.Blocks.Clear();
+            //ColoredText.Text = null;
+            ColoredText.Document.Blocks.Clear();
+        }
+
+        private void ApplyRulesButton_Click(object sender, RoutedEventArgs e)
+        {
+            //string rawText = RawText.Text;
+            //ColoredText.Text = rawText;
+
+            //works:
+            //TextRange rangeOfRawText = new TextRange(RawText.Document.ContentStart, RawText.Document.ContentEnd);
+
+            //doesn't work:
+            //TextRange rangeOfColoredText = new TextRange(ColoredText.Document.ContentStart, RawText.Document.ContentEnd);
+        }
+
+
+        //___________________ End of Rule Usage tab _______________________
     }
 
-
+    // _______________________ This window Events ________________________ (kinda useless rn)
     public class MainWindowAddEvent : EventArgs
     {
         public int CountIdEvent { get; set; }
