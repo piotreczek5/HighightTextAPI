@@ -307,25 +307,75 @@ namespace BasicMechanism
 
         // Idk if that shouldn't be in the second project file:
         //_____________________ Start of Rule Usage tab ________________________
+
+
         private void ClearTextButton_Click(object sender, RoutedEventArgs e)
         {
-            //RawText.Text = null;
             RawText.Document.Blocks.Clear();
-            //ColoredText.Text = null;
             ColoredText.Document.Blocks.Clear();
         }
 
         private void ApplyRulesButton_Click(object sender, RoutedEventArgs e)
         {
+            //insert text in RawText - click apply rules - set colored text to the raw text
+            //look for the rules - get the index of the rule found - create two strings(if indexof and indexofLast are the same)
+            //with stuff before and after rule [create as text range] - wirte before to the colored text - create new text range
+            //write my rule with color - create text range - write after.
+
+            //when the second rule will be applied too i should somehow be able to do the same thing but keep the color of the previous rule
+            //so i propably should keep text range of every rule but it's not possible in this scenario... i think
+
             //string rawText = RawText.Text;
             //ColoredText.Text = rawText;
+            ColoredText.Document.Blocks.Clear();
 
-            //works:
-            //TextRange rangeOfRawText = new TextRange(RawText.Document.ContentStart, RawText.Document.ContentEnd);
+            TextRange rangeOfRawText = new TextRange(RawText.Document.ContentStart, RawText.Document.ContentEnd);
+            TextRange rangeOfColoredText = new TextRange(ColoredText.Document.ContentEnd, ColoredText.Document.ContentEnd);
 
-            //doesn't work:
-            //TextRange rangeOfColoredText = new TextRange(ColoredText.Document.ContentStart, RawText.Document.ContentEnd);
+            string insertedText = rangeOfRawText.Text;
+            //rangeOfColoredText.Text = insertedText;
+
+            for (int i = 0; i < codeListOfRules.Count(); i++)
+            {
+                //TextRange testRange = new TextRange(ColoredText.Document.ContentEnd, ColoredText.Document.ContentEnd);
+                //testRange.Text = codeListOfRules[i].Rule;
+
+                //it's added as a different paragraphs or some shit and idk how to make it just one line of text
+                if (insertedText.Contains(codeListOfRules[i].Rule))
+                {
+                    string searchedRule = codeListOfRules[i].Rule;
+
+                    int index = insertedText.IndexOf(searchedRule);
+                    int lastIndex = insertedText.LastIndexOf(searchedRule);
+
+                    if(index == lastIndex)
+                    {
+                        string beforeRule = insertedText.Substring(0, index);
+                        string afterRule = insertedText.Substring(index + searchedRule.Length);
+
+                        TextRange beforeRange = new TextRange(ColoredText.Document.ContentEnd, ColoredText.Document.ContentEnd);
+                        beforeRange.Text = beforeRule;
+                        beforeRange.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
+
+                        TextRange ruleRange = new TextRange(ColoredText.Document.ContentEnd, ColoredText.Document.ContentEnd);
+                        ruleRange.Text = searchedRule;
+                        ruleRange.ApplyPropertyValue(TextElement.ForegroundProperty, codeListOfRules[i].Color);
+
+
+                        TextRange afterRange = new TextRange(ColoredText.Document.ContentEnd, ColoredText.Document.ContentEnd);
+                        afterRange.Text = afterRule;
+                        afterRange.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
+                    }
+
+                    //rangeOfColoredText.Text = textInserted.Replace();
+                    //rangeOfColoredText.Text = codeListOfRules[i].Rule;
+                    //rangeOfColoredText.ApplyPropertyValue(TextElement.ForegroundProperty, codeListOfRules[i].Color);
+                }
+            }
+
         }
+
+
 
 
         //___________________ End of Rule Usage tab _______________________
