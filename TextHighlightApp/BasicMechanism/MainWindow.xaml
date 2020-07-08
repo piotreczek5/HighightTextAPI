@@ -6,7 +6,7 @@
         xmlns:wpfx="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:BasicMechanism"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800" SizeToContent="Manual" ResizeMode="NoResize">
     <Grid Cursor="Hand">
         <TabControl>
             <TabItem x:Name="ManagementTab" Header="Rule Management" Cursor="Hand">
@@ -32,7 +32,7 @@
                             </Paragraph>
                         </FlowDocument>
                     </RichTextBox>
-                    <RichTextBox x:Name="ColoredText" Margin="230,244,64,60" IsEnabled="False">
+                    <RichTextBox x:Name="ColoredText" Margin="230,244,64,60" IsEnabled="False" AutomationProperties.IsOffscreenBehavior="Default">
                         <FlowDocument>
                             <Paragraph>
                                 <Run Text=""/>

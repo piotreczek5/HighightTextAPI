@@ -21,13 +21,13 @@ namespace BasicMechanism
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-     
+
     //TODO: 
-    //  V FIX DELETE BUTTON TO REWRITE THE LIST WITH COLORS ETC
     //  - FIX DISPLAY OF THE RULE IN MAIN WINDOW SO IT DOESN'T SHOW SYSTEM.WINDOW. . ..
-    //  V FIX THE AREYOUSURE WINDOW TO CLOSE RIGHT WINDOWS NOT EVERY WINDOW
-    //  V ^THAT MIGHT BE AN ISSUE THAT MAINWINDOW HAS 2 INSTANCES AND THAT'S THE PROBLEM WITH NOT CLOSING APLICATION (COUSE ONE MAIN WW IS RUNNING IN THE BG)
-    //  - MAYBE TRY TO USE NEW RULE CLASS MEMBERS BUT ASSIGN THEM TO THE LISTVIEWITEMS SO I CAN CHANGE IT'S FOREGROUND COLOR IF IT'S POSSIBLE
+    //  - Put NewRule class to the other file
+    //  - Change the display of applied rules so every rule is highlighted in one line
+    //  - Change the display of applied rules so every occuration of a rule is hightlighted
+    //  - Put no resize rn, but i could try to make it resize later on
 
     public partial class MainWindow : Window
     {
@@ -80,6 +80,7 @@ namespace BasicMechanism
             }
 */
         }
+
 
         //it propably should be declared in the class or something :/
         public List<NewRule> codeListOfRules = new List<NewRule>();
@@ -348,6 +349,12 @@ namespace BasicMechanism
                     int index = insertedText.IndexOf(searchedRule);
                     int lastIndex = insertedText.LastIndexOf(searchedRule);
 
+                    //i should try to do a loop here that colors the fisrst index than change range before to the index after rule just found, look for the rule again
+                    //and changes it to the range after second index. till last index. and colors every word.
+
+                    // maybe try for in the for loop so i can pass text pointer as a start of a range each loop iteration
+                    // that would allow me to iterate through every rule and in each rule i can iterate through each occuration
+
                     if(index == lastIndex)
                     {
                         string beforeRule = insertedText.Substring(0, index);
@@ -361,22 +368,17 @@ namespace BasicMechanism
                         ruleRange.Text = searchedRule;
                         ruleRange.ApplyPropertyValue(TextElement.ForegroundProperty, codeListOfRules[i].Color);
 
-
                         TextRange afterRange = new TextRange(ColoredText.Document.ContentEnd, ColoredText.Document.ContentEnd);
                         afterRange.Text = afterRule;
                         afterRange.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
+
                     }
 
-                    //rangeOfColoredText.Text = textInserted.Replace();
-                    //rangeOfColoredText.Text = codeListOfRules[i].Rule;
-                    //rangeOfColoredText.ApplyPropertyValue(TextElement.ForegroundProperty, codeListOfRules[i].Color);
                 }
+
             }
 
         }
-
-
-
 
         //___________________ End of Rule Usage tab _______________________
     }
